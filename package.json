@@ -27,5 +27,12 @@
     "chalk": "^5.2.0",
     "execa": "^6.1.0",
     "ora": "^6.1.2"
+  },
+  "engines": {
+    "node": ">= 18.13",
+    "npm": ">= 8.13"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
