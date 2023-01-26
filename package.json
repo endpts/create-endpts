@@ -1,0 +1,31 @@
+{
+  "name": "create-endpts",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Create a new endpts project",
+  "bin": {
+    "create-endpts": "./dist/bin/cli.js"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "prepare": "tsc --build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/endpts/create-endpts.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/endpts/create-endpts/issues"
+  },
+  "homepage": "https://github.com/endpts/create-endpts#readme",
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "execa": "^6.1.0",
+    "ora": "^6.1.2"
+  }
+}
