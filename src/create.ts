@@ -6,12 +6,15 @@ import { execa } from "execa";
 import ora from "ora";
 import chalk from "chalk";
 
+type PackageManager = "npm" | "bun";
 interface CreateOptions {
   name: string;
+  packageManager: PackageManager;
 }
 
 export class CreateCommand {
   private readonly name: string;
+  private readonly packageManager: PackageManager;
   private readonly projectRootDir: string;
   private readonly templatesRootDir = path.join(
     path.dirname(url.fileURLToPath(import.meta.url)),
@@ -20,6 +23,7 @@ export class CreateCommand {
 
   constructor(opts: CreateOptions) {
     this.name = opts.name || "my-api";
+    this.packageManager = opts.packageManager;
     this.projectRootDir = path.join(process.cwd(), this.name);
   }
 
@@ -120,14 +124,27 @@ export class CreateCommand {
       "@endpts/devtools",
     ];
 
+    const npmArgs = [
+      "install",
+      "--prefix",
+      this.projectRootDir,
+      "--save-dev",
+      ...devDeps,
+    ];
+
+    const bunArgs = [
+      "add",
+      "--cwd",
+      this.projectRootDir,
+      "--development",
+      ...devDeps,
+    ];
+
     try {
-      await execa("npm", [
-        "install",
-        "--prefix",
-        this.projectRootDir,
-        "--save-dev",
-        ...devDeps,
-      ]);
+      await execa(
+        this.packageManager,
+        this.packageManager === "bun" ? bunArgs : npmArgs
+      );
       spinner.succeed();
     } catch (e: any) {
       spinner.fail("Failed to install dependencies");
@@ -162,7 +179,10 @@ export class CreateCommand {
       `  - Change into your project directory using:`,
       chalk.cyan.bold(`cd ./${this.name}`)
     );
-    console.log(`  - Start the dev server:`, chalk.cyan.bold("npm run dev"));
+    console.log(
+      `  - Start the dev server:`,
+      chalk.cyan.bold(`${this.packageManager} run dev`)
+    );
     console.log(
       `  - Create new routes in the ${chalk.bold.cyan("routes/")} directory`
     );
