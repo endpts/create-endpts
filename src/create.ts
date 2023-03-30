@@ -103,6 +103,11 @@ export class CreateCommand {
       let srcPath = path.join(src, entry.name);
       let destPath = path.join(dest, entry.name);
 
+      // if the entry is gitignore, rename it to .gitignore
+      if (entry.name === "gitignore") {
+        destPath = path.join(dest, ".gitignore");
+      }
+
       if (entry.isDirectory()) {
         fs.mkdirSync(destPath, { recursive: true });
         this.copyFiles(srcPath, destPath);
