@@ -2,7 +2,8 @@
 
 import { parseArgs } from "node:util";
 import { CreateCommand } from "../src/create.js";
-import { getPkgManager } from "../src/get-pkg-manager.js";
+import { ViteIntegration } from "../src/integrations/vite.js";
+import { getPkgManager } from "../src/helpers/get-pkg-manager.js";
 
 const currVersion = process.versions.node;
 const currMajorVersion = parseInt(currVersion.split(".")[0], 10);
@@ -19,8 +20,8 @@ const packageManager = getPkgManager();
 
 const { values, positionals } = parseArgs({
   options: {
-    existing: {
-      type: "boolean",
+    integration: {
+      type: "string",
     },
     positionals: {
       type: "string",
@@ -30,17 +31,31 @@ const { values, positionals } = parseArgs({
   allowPositionals: true,
 });
 
-if (values.existing && positionals.length !== 0) {
-  console.error(
-    `The --existing option cannot be used with any other arguments.`
-  );
-  process.exit(1);
+if (values.integration) {
+  if (positionals.length !== 0) {
+    console.error(
+      `The --integration option cannot be used with any other arguments.`
+    );
+    process.exit(1);
+  }
+
+  const integration = values.integration;
+
+  if (integration === "vite") {
+    const viteIntegration = new ViteIntegration({
+      packageManager,
+    });
+
+    await viteIntegration.run();
+  } else {
+    console.error(`The integration "${integration}" is not supported.`);
+    process.exit(1);
+  }
+} else {
+  const init = new CreateCommand({
+    name: positionals[0],
+    packageManager,
+  });
+
+  await init.run();
 }
-
-const init = new CreateCommand({
-  name: positionals[0],
-  packageManager,
-  existing: values.existing,
-});
-
-await init.run();
