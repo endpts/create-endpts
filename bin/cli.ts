@@ -52,10 +52,10 @@ if (values.integration) {
     process.exit(1);
   }
 } else {
-  const init = new CreateCommand({
+  const create = new CreateCommand({
     name: positionals[0],
     packageManager,
   });
 
-  await init.run();
+  await create.run();
 }

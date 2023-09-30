@@ -192,11 +192,13 @@ The dev server will automatically reload when you make changes to your API route
 
 ## Making requests to your API
 
-You can make requests to your API using fetch or any other HTTP client. For example, to make a request to the \`/users\` route, you can run:
+You can make requests to your API using fetch or any other HTTP client. The endpts dev server runs on port 3000 by default, however, if port 3000 is already in use, it will use the next available port.
+
+To make a request to your API, you can use the \`VITE_ENDPTS_API_URL\` environment variable. For example, to make a request to the \`/users\` route, from the client:
 
 \`\`\`ts
 // ensure that you specify the correct port
-const res = await fetch("http://localhost:3000/users");
+const res = await fetch(new URL("/users", import.meta.env.VITE_ENDPTS_API_URL));
 const users = await res.json();
 \`\`\`
 `
