@@ -11,13 +11,11 @@ import type { PackageManager } from "./helpers/package-manager.js";
 interface CreateOptions {
   name: string;
   packageManager: PackageManager;
-  existing?: boolean;
 }
 
 export class CreateCommand {
   private readonly name: string;
   private readonly packageManager: PackageManager;
-  private readonly existing?: boolean;
   private readonly projectRootDir: string;
   private readonly templatesRootDir = path.join(
     path.dirname(url.fileURLToPath(import.meta.url)),
@@ -27,13 +25,7 @@ export class CreateCommand {
   constructor(opts: CreateOptions) {
     this.name = opts.name || "my-api";
     this.packageManager = opts.packageManager;
-    this.existing = opts.existing;
-
-    // if we're augmenting an existing project, the CWD is the project root
-    // otherwise, we create a new directory for the project
-    this.projectRootDir = this.existing
-      ? process.cwd()
-      : path.join(process.cwd(), this.name);
+    this.projectRootDir = path.join(process.cwd(), this.name);
   }
 
   private createProjectDir() {

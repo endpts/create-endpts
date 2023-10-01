@@ -4,11 +4,7 @@ import path from "node:path";
 import { execa } from "execa";
 import ora from "ora";
 import chalk from "chalk";
-import {
-  getExecCmd,
-  getPkgManager,
-  type PackageManager,
-} from "../helpers/package-manager.js";
+import { type PackageManager } from "../helpers/package-manager.js";
 
 interface IntegrationOptions {
   packageManager: PackageManager;
@@ -21,7 +17,6 @@ export class ViteIntegration {
   constructor(opts: IntegrationOptions) {
     this.packageManager = opts.packageManager;
     // if we're augmenting an existing project, the CWD is the project root
-    // otherwise, we create a new directory for the project
     this.projectRootDir = process.cwd();
   }
 
