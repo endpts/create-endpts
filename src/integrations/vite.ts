@@ -122,7 +122,7 @@ export class ViteIntegration {
       "concurrently",
     ];
 
-    const args = ["install", "--D", ...devDeps];
+    const args = ["add", "-D", ...devDeps];
 
     try {
       await execa(this.packageManager, args, {

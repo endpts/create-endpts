@@ -130,7 +130,7 @@ export class CreateCommand {
       "@endpts/devtools",
     ];
 
-    const args = ["install", "--D", ...devDeps];
+    const args = ["add", "-D", ...devDeps];
 
     try {
       await execa(this.packageManager, args, {
