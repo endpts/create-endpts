@@ -6,7 +6,7 @@ import { execa } from "execa";
 import ora from "ora";
 import chalk from "chalk";
 
-import { PackageManager } from "./helpers/get-pkg-manager.js";
+import type { PackageManager } from "./helpers/package-manager.js";
 
 interface CreateOptions {
   name: string;

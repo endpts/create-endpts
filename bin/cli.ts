@@ -3,7 +3,7 @@
 import { parseArgs } from "node:util";
 import { CreateCommand } from "../src/create.js";
 import { ViteIntegration } from "../src/integrations/vite.js";
-import { getPkgManager } from "../src/helpers/get-pkg-manager.js";
+import { getPkgManager } from "../src/helpers/package-manager.js";
 
 const currVersion = process.versions.node;
 const currMajorVersion = parseInt(currVersion.split(".")[0], 10);

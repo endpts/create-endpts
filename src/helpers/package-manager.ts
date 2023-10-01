@@ -13,3 +13,15 @@ export function getPkgManager(): PackageManager {
 
   return "npm";
 }
+
+export function getExecCmd() {
+  const pkgManager = getPkgManager();
+
+  if (pkgManager === "pnpm") {
+    return "pnpm dlx";
+  } else if (pkgManager === "bun") {
+    return "bunx";
+  }
+
+  return "npx";
+}

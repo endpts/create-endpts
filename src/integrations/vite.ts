@@ -4,7 +4,11 @@ import path from "node:path";
 import { execa } from "execa";
 import ora from "ora";
 import chalk from "chalk";
-import { PackageManager } from "../helpers/get-pkg-manager.js";
+import {
+  getExecCmd,
+  getPkgManager,
+  type PackageManager,
+} from "../helpers/package-manager.js";
 
 interface IntegrationOptions {
   packageManager: PackageManager;
@@ -74,6 +78,7 @@ export class ViteIntegration {
       packageJson.scripts = {
         ...packageJson.scripts,
         "dev:server": "endpts dev",
+        "dev:all": 'concurrently -n vite,endpts "npm:dev" "npm:dev:server"',
       };
 
       fs.writeFileSync(
@@ -119,6 +124,7 @@ export class ViteIntegration {
       "@types/node",
       "@endpts/types",
       "@endpts/devtools",
+      "concurrently",
     ];
 
     const args = ["install", "--D", ...devDeps];
@@ -265,8 +271,8 @@ export function withCors(res: Response) {
       chalk.green.bold(`Your project has been updated to use endpts API\n`)
     );
     console.log(
-      `  - Start the dev server:`,
-      chalk.cyan.bold(`${this.packageManager} run dev:server`)
+      `  - Start the Vite app and endpts dev server:`,
+      chalk.cyan.bold(`${this.packageManager} run dev:all`)
     );
     console.log(
       `  - Create new routes in the ${chalk.bold.cyan("routes/")} directory`
