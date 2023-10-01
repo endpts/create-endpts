@@ -6,7 +6,8 @@ import { execa } from "execa";
 import ora from "ora";
 import chalk from "chalk";
 
-type PackageManager = "npm" | "bun";
+import type { PackageManager } from "./helpers/package-manager.js";
+
 interface CreateOptions {
   name: string;
   packageManager: PackageManager;
@@ -27,7 +28,7 @@ export class CreateCommand {
     this.projectRootDir = path.join(process.cwd(), this.name);
   }
 
-  createProjectDir() {
+  private createProjectDir() {
     const spinner = ora({
       text: `Creating project directory: ${this.name}`,
     }).start();
@@ -52,7 +53,7 @@ export class CreateCommand {
     }
   }
 
-  writePackageJson() {
+  private writePackageJson() {
     const spinner = ora({
       text: `Writing package.json`,
     }).start();
@@ -81,7 +82,7 @@ export class CreateCommand {
     }
   }
 
-  copyTemplateFiles(src: string, dest: string) {
+  private copyTemplateFiles(src: string, dest: string) {
     const spinner = ora({
       text: `Copying project files`,
     }).start();
@@ -117,7 +118,7 @@ export class CreateCommand {
     }
   }
 
-  async installDependencies() {
+  private async installDependencies() {
     const spinner = ora({
       text: "Installing dependencies",
     }).start();
@@ -129,27 +130,12 @@ export class CreateCommand {
       "@endpts/devtools",
     ];
 
-    const npmArgs = [
-      "install",
-      "--prefix",
-      this.projectRootDir,
-      "--save-dev",
-      ...devDeps,
-    ];
-
-    const bunArgs = [
-      "add",
-      "--cwd",
-      this.projectRootDir,
-      "--development",
-      ...devDeps,
-    ];
+    const args = ["install", "--D", ...devDeps];
 
     try {
-      await execa(
-        this.packageManager,
-        this.packageManager === "bun" ? bunArgs : npmArgs
-      );
+      await execa(this.packageManager, args, {
+        cwd: this.projectRootDir,
+      });
       spinner.succeed();
     } catch (e: any) {
       spinner.fail("Failed to install dependencies");
@@ -166,9 +152,9 @@ export class CreateCommand {
     );
     console.log();
 
-    await this.createProjectDir();
-    await this.writePackageJson();
-    await this.copyTemplateFiles(
+    this.createProjectDir();
+    this.writePackageJson();
+    this.copyTemplateFiles(
       path.join(this.templatesRootDir, "./basic/typescript"),
       this.projectRootDir
     );

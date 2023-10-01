@@ -1,14 +1,61 @@
 #!/usr/bin/env node
 
-import path from "path";
+import { parseArgs } from "node:util";
 import { CreateCommand } from "../src/create.js";
+import { ViteIntegration } from "../src/integrations/vite.js";
+import { getPkgManager } from "../src/helpers/package-manager.js";
 
-const runtime = path.basename(process.argv[0]).replace(".exe", "");
-const _argv = process.argv.slice(2);
+const currVersion = process.versions.node;
+const currMajorVersion = parseInt(currVersion.split(".")[0], 10);
+const minMajorVersion = 18;
 
-const init = new CreateCommand({
-  name: _argv[0],
-  packageManager: runtime === "bun" ? "bun" : "npm",
+if (currMajorVersion < minMajorVersion) {
+  console.error(
+    `The version of Node.js you are using (v${currVersion}) is not supported. Please use Node.js v${minMajorVersion} or higher.`
+  );
+  process.exit(1);
+}
+
+const packageManager = getPkgManager();
+
+const { values, positionals } = parseArgs({
+  options: {
+    integration: {
+      type: "string",
+    },
+    positionals: {
+      type: "string",
+      multiple: true,
+    },
+  },
+  allowPositionals: true,
 });
 
-await init.run();
+if (values.integration) {
+  if (positionals.length !== 0) {
+    console.error(
+      `The --integration option cannot be used with any other arguments.`
+    );
+    process.exit(1);
+  }
+
+  const integration = values.integration;
+
+  if (integration === "vite") {
+    const viteIntegration = new ViteIntegration({
+      packageManager,
+    });
+
+    await viteIntegration.run();
+  } else {
+    console.error(`The integration "${integration}" is not supported.`);
+    process.exit(1);
+  }
+} else {
+  const create = new CreateCommand({
+    name: positionals[0],
+    packageManager,
+  });
+
+  await create.run();
+}
